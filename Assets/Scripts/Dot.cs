@@ -14,9 +14,11 @@ public class Dot : MonoBehaviour
 
 	// if true, the dot will be attracted to the mouse
 	private bool isTriggered = false;
+	private int id;
 
-	public void create(float size, float speed, float triggerRadius, float escapeRadius, Sprite sprite, Color color)
+	public void create(int id, float size, float speed, float triggerRadius, float escapeRadius, Sprite sprite, Color color)
 	{
+		this.id = id;
 		this.size = size;
 		this.speed = speed;
 		this.triggerRadius = triggerRadius;
@@ -50,9 +52,9 @@ public class Dot : MonoBehaviour
 		CheckCursorOutsideEscapeRadius();
 		CheckNeighborsTriggerStatus();
 
-		// if the cursor is inside the trigger radius, move towards the cursor
 		if (isTriggered)
 		{
+			// if the cursor is inside the trigger radius, move towards the cursor
 			Camera cam = Camera.main;
 
 			Vector3 mousePos = Input.mousePosition;
@@ -60,8 +62,16 @@ public class Dot : MonoBehaviour
 			mousePos = cam.ScreenToWorldPoint(mousePos);
 			transform.position = Vector3.MoveTowards(transform.position, mousePos, speed * Time.deltaTime);
 		}
+		else
+		{
+			// if it's not trigghered start wandering
+			// transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0) * speed / 2 * Time.deltaTime;
+			UnityEngine.Debug.Log(Time.time);
+			var xMovement = Mathf.PerlinNoise((Time.time * id / 100), id) * 2 - 1;
+			var yMovement = Mathf.PerlinNoise(id, (Time.time * id / 100)) * 2 - 1;
+			transform.position += new Vector3(xMovement, yMovement, 0) * speed * Time.deltaTime;
+		}
 
-		// if the cursor is outside the escape radius, start wandering
 	}
 
 	void CheckCursorInsideTriggerRadius()
@@ -96,7 +106,7 @@ public class Dot : MonoBehaviour
 			{
 				// ex: 6,8% to be triggered each frame (TODO: maybe it's too much)
 				float distancePercentage = Vector3.Distance(transform.position, dot.transform.position) / triggerRadius * 100;
-				
+
 				if (Random.Range(0, 100) < distancePercentage)
 				{
 					dot.CheckCursorOutsideEscapeRadius();

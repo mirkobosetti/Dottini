@@ -44,6 +44,7 @@ public class Main : MonoBehaviour
 			// TODO: smaller is faster, bigger is slower
 			// TODO: less smaller and less bigger, we need a random that is not linear // https://docs.unity3d.com/ScriptReference/Mathf.SmoothStep.html
 			dot.create(
+				i,
 				Mathf.Lerp(sizeRandomness.min, sizeRandomness.max, Random.Range(0f, 1f)),
 				Mathf.Lerp(speedRandomness.min, speedRandomness.max, Random.Range(0f, 1f)),
 				Mathf.Lerp(triggerRadiusRandomness.min, triggerRadiusRandomness.max, Random.Range(0f, 1f)),
