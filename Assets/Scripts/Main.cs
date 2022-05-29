@@ -33,7 +33,13 @@ public class Main : MonoBehaviour
 		for (int i = 0; i < count; i++)
 		{
 			dots[i] = new GameObject("Dot " + i);
+
 			dots[i].AddComponent<SpriteRenderer>();
+			dots[i].AddComponent<CircleCollider2D>();
+			dots[i].AddComponent<Rigidbody2D>();
+			TriggerTimer timer = dots[i].AddComponent<TriggerTimer>();
+			timer.initialTime = Random.Range(0.5f, 1f) * count / 200;
+
 			Dot dot = dots[i].AddComponent<Dot>();
 
 			(float min, float max) sizeRandomness = GetRandomnessMinAndMax(size, randomness);
@@ -41,24 +47,32 @@ public class Main : MonoBehaviour
 			(float min, float max) triggerRadiusRandomness = GetRandomnessMinAndMax(triggerRadius, randomness);
 			(float min, float max) escapeRadiusRandomness = GetRandomnessMinAndMax(escapeRadius, randomness);
 
+			(float min, float max) colorRedRandomness = GetRandomnessMinAndMax(color.r, randomness);
+			(float min, float max) colorGreenRandomness = GetRandomnessMinAndMax(color.g, randomness);
+			(float min, float max) colorBlueRandomness = GetRandomnessMinAndMax(color.b, randomness);
+
 			// TODO: smaller is faster, bigger is slower
 			// TODO: less smaller and less bigger, we need a random that is not linear // https://docs.unity3d.com/ScriptReference/Mathf.SmoothStep.html
 			dot.create(
 				i,
-				Mathf.Lerp(sizeRandomness.min, sizeRandomness.max, Random.Range(0f, 1f)),
-				Mathf.Lerp(speedRandomness.min, speedRandomness.max, Random.Range(0f, 1f)),
-				Mathf.Lerp(triggerRadiusRandomness.min, triggerRadiusRandomness.max, Random.Range(0f, 1f)),
-				Mathf.Lerp(escapeRadiusRandomness.min, escapeRadiusRandomness.max, Random.Range(0f, 1f)),
+				Random.Range(sizeRandomness.min, sizeRandomness.max),
+				Random.Range(speedRandomness.min, speedRandomness.max),
+				Random.Range(triggerRadiusRandomness.min, triggerRadiusRandomness.max),
+				Random.Range(escapeRadiusRandomness.min, escapeRadiusRandomness.max),
 				sprite,
-				color
+				new Color (
+					Random.Range(colorRedRandomness.min, colorRedRandomness.max),
+					Random.Range(colorGreenRandomness.min, colorGreenRandomness.max),
+					Random.Range(colorBlueRandomness.min, colorBlueRandomness.max)
+				)
 			);
 		}
 	}
 
 	(float min, float max) GetRandomnessMinAndMax(float baseNumber, float percentage)
 	{
-		float min = baseNumber - baseNumber*percentage/100;
-		float max = baseNumber + baseNumber*percentage/100;
+		float min = baseNumber - baseNumber * percentage / 100;
+		float max = baseNumber + baseNumber * percentage / 100;
 
 		return (min, max);
 	}

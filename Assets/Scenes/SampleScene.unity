@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d03a93c3add996a4abc9e7de0e9c03ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  count: 50
+  count: 1000
   size: 0.2
   speed: 1
   triggerRadius: 2

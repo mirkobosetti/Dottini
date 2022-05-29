@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Dot : MonoBehaviour
@@ -11,6 +12,9 @@ public class Dot : MonoBehaviour
 	Sprite sprite = null;
 	Color color = Color.red;
 	SpriteRenderer sr;
+	CircleCollider2D cc;
+	Rigidbody2D rb;
+	TriggerTimer timer;
 
 	// if true, the dot will be attracted to the mouse
 	private bool isTriggered = false;
@@ -27,10 +31,13 @@ public class Dot : MonoBehaviour
 		this.color = color;
 	}
 
-
 	void Awake()
 	{
 		sr = GetComponent<SpriteRenderer>();
+		cc = GetComponent<CircleCollider2D>();
+		rb = GetComponent<Rigidbody2D>();
+		rb.gravityScale = 0;
+		timer = GetComponent<TriggerTimer>();
 	}
 
 	void Start()
@@ -50,7 +57,13 @@ public class Dot : MonoBehaviour
 	{
 		CheckCursorInsideTriggerRadius();
 		CheckCursorOutsideEscapeRadius();
-		CheckNeighborsTriggerStatus();
+
+		if (timer.timeRemaining == timer.initialTime)
+		{
+			CheckNeighborsTriggerStatus();
+
+			Debug.Log(timer.timeRemaining + "/" + timer.initialTime);
+		}
 
 		if (isTriggered)
 		{
@@ -66,7 +79,6 @@ public class Dot : MonoBehaviour
 		{
 			// if it's not trigghered start wandering
 			// transform.position += new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0) * speed / 2 * Time.deltaTime;
-			UnityEngine.Debug.Log(Time.time);
 			var xMovement = Mathf.PerlinNoise((Time.time * id / 100), id) * 2 - 1;
 			var yMovement = Mathf.PerlinNoise(id, (Time.time * id / 100)) * 2 - 1;
 			transform.position += new Vector3(xMovement, yMovement, 0) * speed * Time.deltaTime;
@@ -99,24 +111,17 @@ public class Dot : MonoBehaviour
 	/// </summary>
 	void CheckNeighborsTriggerStatus()
 	{
-		foreach (Dot dot in FindObjectsOfType<Dot>())
-		{
-			if (dot == this) continue;
-			if (Vector3.Distance(transform.position, dot.transform.position) <= triggerRadius)
-			{
-				// ex: 6,8% to be triggered each frame (TODO: maybe it's too much)
-				float distancePercentage = Vector3.Distance(transform.position, dot.transform.position) / triggerRadius * 100;
+		// triggered dots inside the trigger radius
+		Dot[] triggeredDots = FindObjectsOfType<Dot>()
+						.Where(d => d.id != id)
+						.Where(d => Vector3.Distance(transform.position, d.transform.position) < triggerRadius)
+						.Where(d => d.isTriggered)
+						.ToArray();
 
-				if (Random.Range(0, 100) < distancePercentage)
-				{
-					dot.CheckCursorOutsideEscapeRadius();
-					if (dot.isTriggered)
-					{
-						isTriggered = true;
-						break;
-					}
-				}
-			}
-		}
+		if (triggeredDots.Length == 0) return;
+
+		foreach (Dot dot in triggeredDots) dot.CheckCursorOutsideEscapeRadius();
+
+		isTriggered = true;
 	}
 }
