@@ -53,8 +53,6 @@ public class Main : MonoBehaviour
 
 			float baseSize = Random.Range(sizeRandomness.min, sizeRandomness.max);
 
-			// TODO: smaller is faster, bigger is slower
-			// TODO: less smaller and less bigger, we need a random that is not linear // https://docs.unity3d.com/ScriptReference/Mathf.SmoothStep.html
 			dot.create(
 				i,
 				baseSize,
