@@ -8,7 +8,7 @@ public class Main : MonoBehaviour
 	public int count = 500;
 
 	public float size = 0.2f;
-	public float speed = 1;
+	public float speed = 0.1f;
 
 	[Tooltip("Radius of the circle where dots will be attracted to the mouse")]
 	public float triggerRadius = 2f;
@@ -51,12 +51,14 @@ public class Main : MonoBehaviour
 			(float min, float max) colorGreenRandomness = GetRandomnessMinAndMax(color.g, randomness);
 			(float min, float max) colorBlueRandomness = GetRandomnessMinAndMax(color.b, randomness);
 
+			float baseSize = Random.Range(sizeRandomness.min, sizeRandomness.max);
+
 			// TODO: smaller is faster, bigger is slower
 			// TODO: less smaller and less bigger, we need a random that is not linear // https://docs.unity3d.com/ScriptReference/Mathf.SmoothStep.html
 			dot.create(
 				i,
-				Random.Range(sizeRandomness.min, sizeRandomness.max),
-				Random.Range(speedRandomness.min, speedRandomness.max),
+				baseSize,
+				Random.Range(speedRandomness.min, speedRandomness.max) / baseSize,
 				Random.Range(triggerRadiusRandomness.min, triggerRadiusRandomness.max),
 				Random.Range(escapeRadiusRandomness.min, escapeRadiusRandomness.max),
 				sprite,

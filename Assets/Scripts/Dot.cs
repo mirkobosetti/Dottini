@@ -58,13 +58,8 @@ public class Dot : MonoBehaviour
 		CheckCursorInsideTriggerRadius();
 		CheckCursorOutsideEscapeRadius();
 
-		if (timer.timeRemaining == timer.initialTime)
-		{
-			CheckNeighborsTriggerStatus();
-
-			Debug.Log(timer.timeRemaining + "/" + timer.initialTime);
-		}
-
+		if (timer.timeRemaining == timer.initialTime) CheckNeighborsTriggerStatus();
+		
 		if (isTriggered)
 		{
 			// if the cursor is inside the trigger radius, move towards the cursor
